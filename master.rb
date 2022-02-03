@@ -121,7 +121,7 @@ o This clue means one number was not anywhere in the code."
       puts "Incorrect. #{12 - self.guess_num} guesses left."
       puts "Clue: #{self.show_clue}"
     else
-      puts "Incorrect guess. No Guesses left. Game over. The master code was #{@code.join("")}"
+      puts "Incorrect guess. No Guesses left. Game over. The master code was #{@code.join('')}"
     end
   end
 
@@ -180,10 +180,36 @@ o This clue means one number was not anywhere in the code."
     else
       puts 'Please enter "y" for yes or "n" for no.'
     end
-
-
   end
-
 end
 game = Mastermind.new
 game.start_game
+
+
+
+def computer_guess_one(player_code)
+  rando_guess_array = [1, 2, 3, 4, 5, 6]
+  edited_array = []
+  for guess in rando_guess_array
+    for number in player_code
+      if guess == number
+       edited_array.push(guess)
+       puts "Computer Guess: #{edited_array}"
+      end
+    end
+  end
+  edited_array
+end
+
+def computer_guess_two(player_code, computer_guess)
+  matching = false
+  new_guess = []
+  guess = 0
+  until matching == true 
+    new_guess = computer_guess.shuffle
+    guess += 1
+    puts "Guess number #{guess}"
+    matching = true if new_guess == player_code
+  end
+  return new_guess
+end
