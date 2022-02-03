@@ -28,14 +28,16 @@ X This clue means you have 1 correct number in the correct location.
 * This clue means you have 1 correct number, but in the wrong location.
 
 o This clue means one number was not anywhere in the code."
+
   end
 
   def end_game
     @game_over = true
   end
 
-  def reset_guess
+  def reset_game
     @guess_number = 0
+    @game_over = false
   end
 
   def guess_num
@@ -91,20 +93,20 @@ o This clue means one number was not anywhere in the code."
 
   def check_positions(guess_string)
     guess_array = guess_string.split('')
-    incorrect_array = []
+    edited_code_array = []
     guess_array.each_index do |i|
       if guess_array[i] == @code[i]
         self.position_true
       else
-        incorrect_array.push(guess_array[i])
+        edited_code_array.push(@code[i])
       end
     end
-    incorrect_array
+    edited_code_array
   end
 
-  def check_there(guess_string)
+  def check_there(guess_string, edited_code)
     guess_array = guess_string.split('')
-    @code.each { |i| self.there_true if guess_array.any?(i) || @code.length < 4}
+    edited_code.each { |i| self.there_true if guess_array.any?(i) && @clue.length < 4}
   end
 
   def fill_clue
@@ -113,13 +115,13 @@ o This clue means one number was not anywhere in the code."
 
   def incorrect_guess(guess)
     if self.guess_num < 12
-      self.check_positions(guess)
-      self.check_there(guess)
+      edited_code = self.check_positions(guess)
+      self.check_there(guess, edited_code)
       self.fill_clue
       puts "Incorrect. #{12 - self.guess_num} guesses left."
       puts "Clue: #{self.show_clue}"
     else
-      puts 'Incorrect guess. No Guesses left. Game over'
+      puts "Incorrect guess. No Guesses left. Game over. The master code was #{@code.join("")}"
     end
   end
 
@@ -146,7 +148,6 @@ o This clue means one number was not anywhere in the code."
 
   def play_game
     self.create_code
-    puts self.code
     puts 'Enter your 4 digit code below:'
     self.game_loop
   end
@@ -154,10 +155,10 @@ o This clue means one number was not anywhere in the code."
   def play_again
     answered = false
     while answered == false
-      puts 'Would you like to play Mastermind? (y/n)'
+      puts 'Would you like to play another round? (y/n)'
       answer = gets.strip
       if answer == "y" || answer == "Y"
-        self.reset_guess
+        self.reset_game
         self.play_game
       elsif answer == "n" || answer == "N"
         answered = true
@@ -167,22 +168,22 @@ o This clue means one number was not anywhere in the code."
       end
     end
   end
+
+  def start_game
+    puts "Are you ready to play Mastermind? (y/n)"
+    answer = gets.strip
+    if answer == "y" || answer == "Y"
+      self.play_game
+      self.play_again
+    elsif answer == "n" || answer == "N"
+        puts 'Oh well. Maybe next time...'
+    else
+      puts 'Please enter "y" for yes or "n" for no.'
+    end
+
+
+  end
+
 end
 game = Mastermind.new
-game.play_again
-
-def check_positions(guess_string)
-  guess_array = guess_string.split('')
-  @code.each_index do |i|
-    guess_array.each_index do |j|
-      if i == j
-        if guess_array.index(i) == @code.index(j)
-          self.position_ture
-        else
-          self.there_true
-        end
-      end
-    end
-  end
-end
-
+game.start_game
