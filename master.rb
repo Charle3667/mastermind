@@ -91,6 +91,47 @@ o This clue means one number was not anywhere in the code."
     end
   end
 
+  def computer_guess_one(player_code)
+    rando_guess_array = ['1', '2', '3', '4', '5', '6']
+    edited_array = []
+    for guess in rando_guess_array
+      for number in player_code
+        if guess == number
+         edited_array.push(guess.to_i)
+         puts "Computer Guess: #{edited_array}"
+        end
+      end
+    end
+    edited_array
+  end
+
+  def computer_guess_two(player_code, computer_guess)
+    computer_s_code = computer_guess.map {|i| i.to_s}
+    matching = false
+    new_guess = []
+    previous_guesses = []
+    until matching == true
+      new_guess = computer_s_code.shuffle
+      if previous_guesses.any?(new_guess)
+        next
+      else
+        previous_guesses.push(new_guess)
+        puts "Computer Guess: #{new_guess.map {|i| i.to_i}}"
+        matching = true if new_guess == player_code
+      end
+    end
+    new_guess
+  end
+
+  def computer_play
+    puts 'Please enter your secret code below:'
+    player_string = gets.strip
+    player_code = player_string.to_s.split('')
+    first_it = computer_guess_one(player_code)
+    puts first_it
+    computer_guess_two(player_code, first_it)
+  end
+
   def check_positions(guess_string)
     guess_array = guess_string.split('')
     edited_code_array = []
@@ -184,32 +225,3 @@ o This clue means one number was not anywhere in the code."
 end
 game = Mastermind.new
 game.start_game
-
-
-
-def computer_guess_one(player_code)
-  rando_guess_array = [1, 2, 3, 4, 5, 6]
-  edited_array = []
-  for guess in rando_guess_array
-    for number in player_code
-      if guess == number
-       edited_array.push(guess)
-       puts "Computer Guess: #{edited_array}"
-      end
-    end
-  end
-  edited_array
-end
-
-def computer_guess_two(player_code, computer_guess)
-  matching = false
-  new_guess = []
-  guess = 0
-  until matching == true 
-    new_guess = computer_guess.shuffle
-    guess += 1
-    puts "Guess number #{guess}"
-    matching = true if new_guess == player_code
-  end
-  return new_guess
-end
